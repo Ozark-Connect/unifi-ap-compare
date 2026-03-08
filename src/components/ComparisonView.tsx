@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { AccessPoint, BandKey } from '../types';
+import type { AccessPoint, BandKey, BandData, AntennaConfig } from '../types';
 import { EIRPBar } from './EIRPBar';
 
 interface ComparisonViewProps {
@@ -15,14 +15,6 @@ const BAND_COLORS: Record<BandKey, string> = {
   '6GHz': 'text-unifi-green',
 };
 
-const GEN_COLORS: Record<string, string> = {
-  'Wi-Fi 7': 'text-purple-400',
-  'Wi-Fi 6E': 'text-unifi-green',
-  'Wi-Fi 6': 'text-unifi-blue-bright',
-  'Wi-Fi 5': 'text-unifi-amber',
-  'Wi-Fi 4': 'text-gray-400',
-};
-
 function formatSpeed(mbps: number) {
   if (mbps >= 1000) return `${(mbps / 1000).toFixed(1)} Gbps`;
   return `${mbps} Mbps`;
@@ -33,29 +25,45 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
   const [hideIdentical, setHideIdentical] = useState(false);
   const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
 
+  // Per-device config selection: slug -> config index
+  const [configSelections, setConfigSelections] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    for (const d of devices) init[d.slug] = 0;
+    return init;
+  });
+
+  const setConfig = (slug: string, idx: number) => {
+    setConfigSelections(prev => ({ ...prev, [slug]: idx }));
+  };
+
+  // Get the active config for each device
+  const activeConfigs = useMemo(() => {
+    return devices.map(d => {
+      const idx = configSelections[d.slug] ?? 0;
+      return d.configs[idx] || d.configs[0];
+    });
+  }, [devices, configSelections]);
+
   // Calculate max EIRP per band for bar scaling
   const maxEirpMw = useMemo(() => {
     const result: Record<BandKey, number> = { '2.4GHz': 0, '5GHz': 0, '6GHz': 0 };
-    for (const ap of devices) {
+    for (const config of activeConfigs) {
       for (const band of BAND_ORDER) {
-        const data = ap.bands[band];
+        const data = config.bands[band];
         if (data) result[band] = Math.max(result[band], data.eirpMw);
       }
     }
     return result;
-  }, [devices]);
+  }, [activeConfigs]);
 
   // Build comparison rows
   const sections = useMemo(() => {
-    const baseline = devices[0];
-
     type Row = {
       label: string;
       bandLabel?: string;
       values: (string | number | null)[];
       rawValues?: (number | null)[];
       isBest?: boolean[];
-      unit?: string;
       isEirp?: boolean;
       bandKey?: BandKey;
       highlight?: 'higher' | 'lower';
@@ -73,21 +81,20 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
     const eirpRows: Row[] = [];
 
     for (const band of BAND_ORDER) {
-      const hasData = devices.some(d => d.bands[band]);
+      const hasData = activeConfigs.some(c => c.bands[band]);
       if (!hasData) continue;
 
-      const rawMw = devices.map(d => d.bands[band]?.eirpMw ?? null);
-      const maxMw = Math.max(...rawMw.filter((v): v is number => v !== null));
-      const allSame = rawMw.every(v => v === rawMw[0]);
+      const rawMw = activeConfigs.map(c => c.bands[band]?.eirpMw ?? null);
+      const validMw = rawMw.filter((v): v is number => v !== null);
+      const maxMw = validMw.length > 0 ? Math.max(...validMw) : 0;
+      const allSame = validMw.length > 0 && validMw.every(v => v === validMw[0]);
 
-      // EIRP row
       eirpRows.push({
         label: 'EIRP',
         bandLabel: band,
-        values: devices.map(d => {
-          const data = d.bands[band];
-          if (!data) return null;
-          return `${data.eirpDbm} dBm`;
+        values: activeConfigs.map(c => {
+          const data = c.bands[band];
+          return data ? `${data.eirpDbm} dBm` : null;
         }),
         rawValues: rawMw,
         isBest: rawMw.map(v => v !== null && v === maxMw && !allSame),
@@ -96,33 +103,36 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
         highlight: 'higher',
       });
 
-      // TX Power
-      const txValues = devices.map(d => d.bands[band]?.maxPower ?? null);
       eirpRows.push({
         label: 'TX Power',
         bandLabel: band,
-        values: txValues.map(v => v !== null ? `${v} dBm` : null),
-        rawValues: txValues,
+        values: activeConfigs.map(c => {
+          const data = c.bands[band];
+          return data ? `${data.maxPower} dBm` : null;
+        }),
+        rawValues: activeConfigs.map(c => c.bands[band]?.maxPower ?? null),
         highlight: 'higher',
       });
 
-      // Antenna Gain
-      const gainValues = devices.map(d => d.bands[band]?.gain ?? null);
       eirpRows.push({
         label: 'Antenna Gain',
         bandLabel: band,
-        values: gainValues.map(v => v !== null ? `${v} dBi` : null),
-        rawValues: gainValues,
+        values: activeConfigs.map(c => {
+          const data = c.bands[band];
+          return data ? `${data.gain} dBi` : null;
+        }),
+        rawValues: activeConfigs.map(c => c.bands[band]?.gain ?? null),
         highlight: 'higher',
       });
 
-      // Max Speed
-      const speedValues = devices.map(d => d.bands[band]?.maxSpeed ?? null);
       eirpRows.push({
         label: 'Max Speed',
         bandLabel: band,
-        values: speedValues.map(v => v !== null ? formatSpeed(v) : null),
-        rawValues: speedValues,
+        values: activeConfigs.map(c => {
+          const data = c.bands[band];
+          return data ? formatSpeed(data.maxSpeed) : null;
+        }),
+        rawValues: activeConfigs.map(c => c.bands[band]?.maxSpeed ?? null),
         highlight: 'higher',
       });
     }
@@ -130,61 +140,67 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
     sections.push({ title: 'EIRP & RF Performance', accent: true, rows: eirpRows });
 
     // Radio details
-    const radioRows: Row[] = [
-      {
-        label: 'Wi-Fi Generation',
-        values: devices.map(d => d.wifiGeneration),
-      },
-      {
-        label: 'Supported Bands',
-        values: devices.map(d => d.bandList.join(', ')),
-      },
-      {
-        label: 'Band Steering',
-        values: devices.map(d => d.features.bandsteer ? 'Yes' : 'No'),
-      },
-      {
-        label: 'OFDMA',
-        values: devices.map(d => d.features.ofdma ? 'Yes' : 'No'),
-      },
-    ];
-    sections.push({ title: 'Radio', rows: radioRows });
+    sections.push({
+      title: 'Radio',
+      rows: [
+        {
+          label: 'Wi-Fi Generation',
+          values: devices.map(d => d.wifiGeneration),
+        },
+        {
+          label: 'Supported Bands',
+          values: activeConfigs.map(c => c.bandList.join(', ')),
+        },
+        {
+          label: 'Band Steering',
+          values: devices.map(d => d.features.bandsteer ? 'Yes' : 'No'),
+        },
+        {
+          label: 'OFDMA',
+          values: devices.map(d => d.features.ofdma ? 'Yes' : 'No'),
+        },
+      ],
+    });
 
-    // Network & Connectivity
-    const netRows: Row[] = [
-      {
-        label: 'Ethernet Speed',
-        values: devices.map(d => d.ethernetMaxSpeed ? formatSpeed(d.ethernetMaxSpeed) : null),
-        rawValues: devices.map(d => d.ethernetMaxSpeed || null),
-        highlight: 'higher',
-      },
-      {
-        label: 'Ports',
-        values: devices.map(d => d.numberOfPorts > 0 ? String(d.numberOfPorts) : null),
-      },
-    ];
-    sections.push({ title: 'Network & Connectivity', rows: netRows });
+    // Network
+    sections.push({
+      title: 'Network & Connectivity',
+      rows: [
+        {
+          label: 'Ethernet Speed',
+          values: devices.map(d => d.ethernetMaxSpeed ? formatSpeed(d.ethernetMaxSpeed) : null),
+          rawValues: devices.map(d => d.ethernetMaxSpeed || null),
+          highlight: 'higher',
+        },
+        {
+          label: 'Ports',
+          values: devices.map(d => d.numberOfPorts > 0 ? String(d.numberOfPorts) : null),
+        },
+      ],
+    });
 
     // Physical
-    const physRows: Row[] = [
-      {
-        label: 'Form Factor',
-        values: devices.map(d => d.formFactor),
-      },
-      {
-        label: 'Environment',
-        values: devices.map(d => {
-          if (d.indoor && d.outdoor) return 'Indoor / Outdoor';
-          if (d.outdoor) return 'Outdoor';
-          return 'Indoor';
-        }),
-      },
-      {
-        label: 'Primary Role',
-        values: devices.map(d => d.deviceType === 'gateway' ? 'Router / Gateway' : 'Access Point'),
-      },
-    ];
-    sections.push({ title: 'Physical', rows: physRows });
+    sections.push({
+      title: 'Physical',
+      rows: [
+        {
+          label: 'Form Factor',
+          values: devices.map(d => d.formFactor),
+        },
+        {
+          label: 'Environment',
+          values: devices.map(d => {
+            if (d.indoor && d.outdoor) return 'Indoor / Outdoor';
+            if (d.outdoor) return 'Outdoor';
+            return 'Indoor';
+          }),
+        },
+        {
+          label: 'Primary Role',
+          values: devices.map(d => d.deviceType === 'gateway' ? 'Router / Gateway' : 'Access Point'),
+        },
+      ],
+    });
 
     // Filter identical rows if toggled
     if (hideIdentical) {
@@ -198,7 +214,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
     }
 
     return sections;
-  }, [devices, hideIdentical]);
+  }, [devices, activeConfigs, hideIdentical]);
 
   return (
     <div className="space-y-4">
@@ -243,8 +259,8 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
           <thead>
             <tr className="bg-unifi-surface-2">
               <th className="sticky left-0 z-10 bg-unifi-surface-2 min-w-[140px] md:min-w-[180px] p-3" />
-              {devices.map(ap => (
-                <th key={ap.slug} className="p-3 min-w-[150px] md:min-w-[180px] text-center">
+              {devices.map((ap, di) => (
+                <th key={ap.slug} className="p-3 min-w-[150px] md:min-w-[180px] text-center align-top">
                   <div className="flex flex-col items-center gap-2">
                     <div className="relative group">
                       <button
@@ -270,15 +286,31 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                     </div>
                     <div>
                       <div className="text-xs font-semibold text-unifi-text">{ap.name}</div>
-                      {ap.antennaConfig && (
-                        <div className="text-[10px] text-unifi-text-secondary">{ap.antennaConfig}</div>
-                      )}
                       {ap.deviceType === 'gateway' && (
                         <span className="text-[9px] bg-unifi-amber/20 text-unifi-amber px-1.5 py-0.5 rounded-full mt-0.5 inline-block">
                           Gateway + AP
                         </span>
                       )}
                     </div>
+
+                    {/* Config switcher */}
+                    {ap.configs.length > 1 && (
+                      <div className="flex flex-wrap gap-1 justify-center mt-1">
+                        {ap.configs.map((cfg, ci) => (
+                          <button
+                            key={ci}
+                            onClick={() => setConfig(ap.slug, ci)}
+                            className={`text-[10px] px-2 py-0.5 rounded-full transition-all ${
+                              (configSelections[ap.slug] ?? 0) === ci
+                                ? 'bg-unifi-blue text-white'
+                                : 'bg-unifi-bg text-unifi-text-secondary hover:text-unifi-text'
+                            }`}
+                          >
+                            {cfg.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </th>
               ))}
@@ -288,7 +320,6 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
           <tbody>
             {sections.map((section, si) => (
               <>
-                {/* Section header */}
                 {section.rows.length > 0 && (
                   <tr key={`section-${si}`}>
                     <td
@@ -306,18 +337,18 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
 
                 {section.rows.map((row, ri) => {
                   const bestIdx = row.rawValues && row.highlight === 'higher'
-                    ? row.rawValues.reduce<number[]>((acc, v, i) => {
-                        if (v === null) return acc;
-                        const max = Math.max(...row.rawValues!.filter((x): x is number => x !== null));
-                        const allSame = row.rawValues!.filter((x): x is number => x !== null).every(x => x === max);
-                        if (v === max && !allSame) acc.push(i);
-                        return acc;
-                      }, [])
+                    ? (() => {
+                        const valid = row.rawValues.filter((v): v is number => v !== null);
+                        if (valid.length === 0) return [];
+                        const max = Math.max(...valid);
+                        const allSame = valid.every(v => v === max);
+                        if (allSame) return [];
+                        return row.rawValues.map((v, i) => v === max ? i : -1).filter(i => i >= 0);
+                      })()
                     : [];
 
                   return (
                     <tr key={`row-${si}-${ri}`} className="border-t border-unifi-border/30">
-                      {/* Label */}
                       <td className="sticky left-0 z-10 bg-unifi-bg px-3 py-2 text-xs text-unifi-text-secondary whitespace-nowrap">
                         <div>{row.label}</div>
                         {row.bandLabel && (
@@ -327,14 +358,13 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                         )}
                       </td>
 
-                      {/* Values */}
                       {devices.map((ap, di) => {
+                        const config = activeConfigs[di];
                         const value = row.values[di];
                         const isBest = row.isBest?.[di] || bestIdx.includes(di);
 
-                        // EIRP rows get special bar treatment
                         if (row.isEirp && row.bandKey) {
-                          const data = ap.bands[row.bandKey];
+                          const data = config.bands[row.bandKey];
                           return (
                             <td key={ap.slug} className="px-3 py-2 min-w-[150px]">
                               {data ? (
@@ -346,8 +376,8 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                               ) : (
                                 <span className="text-unifi-text-secondary/30 text-xs">—</span>
                               )}
-                              {showDeltas && di > 0 && data && devices[0].bands[row.bandKey] && (
-                                <Delta current={data.eirpDbm} baseline={devices[0].bands[row.bandKey]!.eirpDbm} unit="dBm" />
+                              {showDeltas && di > 0 && data && activeConfigs[0].bands[row.bandKey] && (
+                                <Delta current={data.eirpDbm} baseline={activeConfigs[0].bands[row.bandKey]!.eirpDbm} unit="dBm" />
                               )}
                             </td>
                           );
@@ -379,7 +409,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
 }
 
 function Delta({ current, baseline, unit }: { current: number; baseline: number; unit: string }) {
-  const diff = current - baseline;
+  const diff = Math.round((current - baseline) * 100) / 100;
   if (diff === 0) return <div className="text-[10px] text-unifi-text-secondary/40 font-mono">0</div>;
   const isPositive = diff > 0;
   return (

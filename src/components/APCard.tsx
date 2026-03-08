@@ -32,6 +32,11 @@ const WIFI_GEN_COLORS: Record<string, string> = {
 export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
   const [imgError, setImgError] = useState(false);
 
+  // Use the active config's bands
+  const config = ap.configs[ap.activeConfig];
+  const bands = config.bands;
+  const bandList = config.bandList;
+
   return (
     <div
       className={`card-hover bg-unifi-surface rounded-xl border overflow-hidden transition-all ${
@@ -41,7 +46,6 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
       {/* Top section: image + info */}
       <div className="p-4 pb-3">
         <div className="flex gap-3">
-          {/* Device image */}
           <div className="w-16 h-16 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
             {!imgError ? (
               <img
@@ -58,16 +62,10 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
             )}
           </div>
 
-          {/* Name + badges */}
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold truncate" title={ap.name}>
               {ap.name}
             </h3>
-            {ap.antennaConfig && (
-              <span className="text-[10px] text-unifi-text-secondary">
-                {ap.antennaConfig}
-              </span>
-            )}
             <div className="flex flex-wrap gap-1 mt-1.5">
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${WIFI_GEN_COLORS[ap.wifiGeneration]}`}>
                 {ap.wifiGeneration}
@@ -75,6 +73,11 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
               {ap.deviceType === 'gateway' && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-unifi-amber/20 text-unifi-amber font-medium">
                   Gateway + AP
+                </span>
+              )}
+              {ap.configs.length > 1 && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-unifi-surface-2 text-unifi-text-secondary font-medium">
+                  {ap.configs.length} configs
                 </span>
               )}
             </div>
@@ -87,7 +90,7 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
             <span
               key={band}
               className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                ap.bandList.includes(band)
+                bandList.includes(band)
                   ? `${BAND_COLORS[band]}/20 ${BAND_TEXT_COLORS[band]}`
                   : 'bg-unifi-bg/50 text-unifi-text-secondary/30'
               }`}
@@ -98,13 +101,13 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
         </div>
       </div>
 
-      {/* EIRP section — the star of the show */}
+      {/* EIRP section */}
       <div className="px-4 py-3 bg-unifi-bg/30 border-t border-unifi-border/50 space-y-2">
         <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">
           EIRP
         </div>
-        {ap.bandList.map(band => {
-          const data = ap.bands[band];
+        {bandList.map(band => {
+          const data = bands[band];
           if (!data) return null;
           return (
             <div key={band} className="flex items-center gap-2">
@@ -123,7 +126,7 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
         })}
       </div>
 
-      {/* Footer: select */}
+      {/* Footer */}
       <div className="px-4 py-2.5 border-t border-unifi-border/50 flex items-center justify-between">
         <span className="text-[10px] text-unifi-text-secondary font-mono">
           {ap.sku}

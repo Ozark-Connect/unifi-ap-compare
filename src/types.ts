@@ -8,6 +8,15 @@ export interface BandData {
 
 export type BandKey = '2.4GHz' | '5GHz' | '6GHz';
 
+/** A single antenna/radio configuration for a device */
+export interface AntennaConfig {
+  label: string;          // e.g. "Standard", "High-Gain", "Directional"
+  bands: Partial<Record<BandKey, BandData>>;
+  bandList: BandKey[];
+  sysid: string;
+  model: string;          // internal model ID (e.g. U7ENT, U7PROMAX)
+}
+
 export interface AccessPoint {
   id: string;
   slug: string;
@@ -20,6 +29,11 @@ export interface AccessPoint {
   iconId: string;
   iconUrl: string;
   wifiGeneration: 'Wi-Fi 4' | 'Wi-Fi 5' | 'Wi-Fi 6' | 'Wi-Fi 6E' | 'Wi-Fi 7';
+  /** The active antenna config (index into configs[]) */
+  activeConfig: number;
+  /** All available antenna/radio configs */
+  configs: AntennaConfig[];
+  /** Convenience: bands from the active config */
   bands: Partial<Record<BandKey, BandData>>;
   bandList: BandKey[];
   features: {
@@ -34,10 +48,9 @@ export interface AccessPoint {
   outdoor: boolean;
   ethernetMaxSpeed: number;
   numberOfPorts: number;
-  antennaConfig?: string;
-  networkType: string; // uap, udm, etc.
-  sysid: string;
+  networkType: string;
   rawDeviceType: string;
+  market: 'us' | 'eu' | 'both';
 }
 
 export type Market = 'us' | 'eu';

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { AccessPoint, BandKey } from './types';
 import { useURLState } from './hooks/useURLState';
 import { useDeviceData } from './hooks/useDeviceData';
@@ -40,8 +40,21 @@ function App() {
     return result;
   }, [devices]);
 
-  // Open comparison view if URL has compare params on load
-  const shouldShowComparison = showComparison || (selectedDevices.length >= 2 && urlState.compare.length >= 2 && !loading);
+  const handleCompare = useCallback(() => {
+    setShowComparison(true);
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setShowComparison(false);
+  }, []);
+
+  const handleRemoveFromComparison = useCallback((slug: string) => {
+    urlState.toggleCompare(slug);
+    // If removing brings us below 2, exit comparison
+    if (selectedDevices.length <= 2) {
+      setShowComparison(false);
+    }
+  }, [urlState, selectedDevices.length]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -52,14 +65,11 @@ function App() {
       />
 
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 py-4 space-y-4">
-        {shouldShowComparison && selectedDevices.length >= 2 ? (
+        {showComparison && selectedDevices.length >= 2 ? (
           <ComparisonView
             devices={selectedDevices}
-            onRemove={(slug) => {
-              urlState.toggleCompare(slug);
-              if (selectedDevices.length <= 2) setShowComparison(false);
-            }}
-            onBack={() => setShowComparison(false)}
+            onRemove={handleRemoveFromComparison}
+            onBack={handleBack}
           />
         ) : (
           <>
@@ -117,12 +127,12 @@ function App() {
       </main>
 
       {/* Comparison tray (only when not in comparison view) */}
-      {!shouldShowComparison && (
+      {!showComparison && (
         <ComparisonTray
           selectedDevices={selectedDevices}
           onRemove={(slug) => urlState.toggleCompare(slug)}
           onClear={() => urlState.setCompare([])}
-          onCompare={() => setShowComparison(true)}
+          onCompare={handleCompare}
         />
       )}
 
@@ -144,7 +154,7 @@ function App() {
       </footer>
 
       {/* Bottom spacer when tray is visible */}
-      {selectedDevices.length > 0 && !shouldShowComparison && (
+      {selectedDevices.length > 0 && !showComparison && (
         <div className="h-20 md:h-16" />
       )}
     </div>

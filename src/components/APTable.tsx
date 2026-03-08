@@ -139,8 +139,8 @@ export function APTable({ devices, selectedSlugs, onToggle, sort, sortDir, onSor
                           <span className="ml-1 text-[9px] text-unifi-amber bg-unifi-amber/15 px-1 py-0.5 rounded">GW</span>
                         )}
                       </div>
-                      {ap.antennaConfig && (
-                        <div className="text-[10px] text-unifi-text-secondary">{ap.antennaConfig}</div>
+                      {ap.configs.length > 1 && (
+                        <div className="text-[10px] text-unifi-text-secondary">{ap.configs.length} configs</div>
                       )}
                     </div>
                   </div>

@@ -1,51 +1,63 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { AccessPoint, FilterState, SortField, SortDir, BandKey, Market } from '../types';
-import { fetchDevices } from '../data/parseDevices';
 
-// EU ETSI limits (dBm EIRP) — used to cap values for EU market
+// EU ETSI EIRP limits (dBm)
 const EU_EIRP_LIMITS: Record<BandKey, number> = {
   '2.4GHz': 20,  // 100 mW
-  '5GHz': 23,    // 200 mW (indoor), outdoor varies
+  '5GHz': 23,    // 200 mW indoor
   '6GHz': 23,    // LPI indoor
 };
 
-function applyMarket(devices: AccessPoint[], market: Market): AccessPoint[] {
-  if (market === 'us') return devices;
-
-  return devices.map(ap => {
-    const newBands = { ...ap.bands };
-    for (const bandKey of ap.bandList) {
-      const band = newBands[bandKey];
-      if (!band) continue;
-      const limit = EU_EIRP_LIMITS[bandKey];
-      if (band.eirpDbm > limit) {
-        // Cap the EIRP at the EU limit
-        const eirpDbm = limit;
-        const eirpMw = Math.round(Math.pow(10, eirpDbm / 10) * 100) / 100;
-        // Recalculate max power (keep gain, reduce power)
-        const maxPower = Math.min(band.maxPower, eirpDbm - band.gain);
-        newBands[bandKey] = { ...band, maxPower, eirpDbm, eirpMw };
-      }
+function capBandsForEU(bands: Partial<Record<BandKey, import('../types').BandData>>): Partial<Record<BandKey, import('../types').BandData>> {
+  const newBands = { ...bands };
+  for (const [bandKey, band] of Object.entries(newBands) as [BandKey, import('../types').BandData][]) {
+    if (!band) continue;
+    const limit = EU_EIRP_LIMITS[bandKey];
+    if (band.eirpDbm > limit) {
+      const eirpDbm = limit;
+      const eirpMw = Math.round(Math.pow(10, eirpDbm / 10) * 100) / 100;
+      const maxPower = Math.min(band.maxPower, eirpDbm - band.gain);
+      newBands[bandKey] = { ...band, maxPower, eirpDbm, eirpMw };
     }
-    return { ...ap, bands: newBands };
-  });
+  }
+  return newBands;
+}
+
+function applyMarketFilter(devices: AccessPoint[], market: Market): AccessPoint[] {
+  return devices
+    // Filter by market availability
+    .filter(ap => {
+      if (market === 'us') return ap.market === 'us' || ap.market === 'both';
+      if (market === 'eu') return ap.market === 'eu' || ap.market === 'both';
+      return true;
+    })
+    // Apply EU caps if needed
+    .map(ap => {
+      if (market !== 'eu') return ap;
+      return {
+        ...ap,
+        bands: capBandsForEU(ap.bands),
+        configs: ap.configs.map(c => ({
+          ...c,
+          bands: capBandsForEU(c.bands),
+        })),
+      };
+    });
 }
 
 function applyFilters(devices: AccessPoint[], filters: FilterState): AccessPoint[] {
   return devices.filter(ap => {
-    // Device type
     if (filters.deviceType.length > 0 && !filters.deviceType.includes(ap.deviceType)) return false;
 
-    // Bands (any match)
-    if (filters.bands.length > 0 && !filters.bands.some(b => ap.bandList.includes(b))) return false;
+    // Check bands across ALL configs (any config having the band counts)
+    if (filters.bands.length > 0) {
+      const allBands = new Set(ap.configs.flatMap(c => c.bandList));
+      if (!filters.bands.some(b => allBands.has(b))) return false;
+    }
 
-    // WiFi generation
     if (filters.wifiGeneration.length > 0 && !filters.wifiGeneration.includes(ap.wifiGeneration)) return false;
-
-    // Form factor
     if (filters.formFactor.length > 0 && !filters.formFactor.includes(ap.formFactor)) return false;
 
-    // Environment
     if (filters.environment.length > 0) {
       const matches = filters.environment.some(env => {
         if (env === 'indoor') return ap.indoor;
@@ -56,14 +68,12 @@ function applyFilters(devices: AccessPoint[], filters: FilterState): AccessPoint
       if (!matches) return false;
     }
 
-    // Search
     if (filters.search) {
       const q = filters.search.toLowerCase();
       const searchable = [
         ap.name, ap.abbrev, ap.sku,
         ...ap.shortnames,
         ap.wifiGeneration, ap.formFactor,
-        ap.antennaConfig || '',
       ].join(' ').toLowerCase();
       if (!searchable.includes(q)) return false;
     }
@@ -159,14 +169,14 @@ export function useDeviceData(market: Market, filters: FilterState, sort: SortFi
     return () => { cancelled = true; };
   }, []);
 
-  const marketAdjusted = useMemo(() => applyMarket(allDevices, market), [allDevices, market]);
-  const filtered = useMemo(() => applyFilters(marketAdjusted, filters), [marketAdjusted, filters]);
+  const marketFiltered = useMemo(() => applyMarketFilter(allDevices, market), [allDevices, market]);
+  const filtered = useMemo(() => applyFilters(marketFiltered, filters), [marketFiltered, filters]);
   const sorted = useMemo(() => applySort(filtered, sort, sortDir), [filtered, sort, sortDir]);
 
   return {
     devices: sorted,
-    allDevices: marketAdjusted,
-    totalCount: marketAdjusted.length,
+    allDevices: marketFiltered,
+    totalCount: marketFiltered.length,
     loading,
     dataSource,
   };
