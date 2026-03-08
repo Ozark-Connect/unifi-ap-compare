@@ -69,13 +69,13 @@ function applyFilters(devices: AccessPoint[], filters: FilterState): AccessPoint
     }
 
     if (filters.search) {
-      const q = filters.search.toLowerCase();
+      const words = filters.search.toLowerCase().split(/\s+/).filter(Boolean);
       const searchable = [
         ap.name, ap.abbrev, ap.sku,
         ...ap.shortnames,
         ap.wifiGeneration, ap.formFactor,
       ].join(' ').toLowerCase();
-      if (!searchable.includes(q)) return false;
+      if (!words.every(w => searchable.includes(w))) return false;
     }
 
     return true;

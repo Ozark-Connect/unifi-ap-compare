@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { AccessPoint, BandKey } from '../types';
+import type { AccessPoint, BandKey, SortField } from '../types';
 import { EIRPMiniBar } from './EIRPBar';
 
 interface APCardProps {
@@ -8,6 +8,7 @@ interface APCardProps {
   onToggle: () => void;
   onDetail: () => void;
   maxEirpMw: Record<BandKey, number>;
+  sort: SortField;
 }
 
 const BAND_PILL_ACTIVE: Record<BandKey, string> = {
@@ -30,13 +31,28 @@ const WIFI_GEN_COLORS: Record<string, string> = {
   'Wi-Fi 4': 'bg-gray-500/20 text-gray-400',
 };
 
-export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw }: APCardProps) {
+type CardMetric = 'eirp' | 'gain' | 'txPower' | 'speed' | 'ethernet';
+
+function sortToMetric(sort: SortField): CardMetric {
+  if (sort.startsWith('gain_')) return 'gain';
+  if (sort.startsWith('txPower_')) return 'txPower';
+  if (sort.startsWith('maxSpeed_')) return 'speed';
+  if (sort === 'ethernetMaxSpeed') return 'ethernet';
+  return 'eirp';
+}
+
+function formatSpeed(mbps: number) {
+  if (mbps >= 1000) return `${(mbps / 1000).toFixed(1)} Gbps`;
+  return `${mbps} Mbps`;
+}
+
+export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw, sort }: APCardProps) {
   const [imgError, setImgError] = useState(false);
 
-  // Use the active config's bands
   const config = ap.configs[ap.activeConfig];
   const bands = config.bands;
   const bandList = config.bandList;
+  const metric = sortToMetric(sort);
 
   return (
     <div
@@ -102,29 +118,97 @@ export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw }: APCardPr
         </div>
       </div>
 
-      {/* EIRP section */}
+      {/* Metric section — adapts to sort field */}
       <div className="px-4 py-3 bg-unifi-bg/30 border-t border-unifi-border/50 space-y-2 cursor-pointer" onClick={onDetail}>
-        <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">
-          EIRP
-        </div>
-        {bandList.map(band => {
-          const data = bands[band];
-          if (!data) return null;
-          return (
-            <div key={band} className="flex items-center gap-2">
-              <span className={`text-[10px] w-7 font-mono ${BAND_TEXT_COLORS[band]}`}>
-                {band.replace('GHz', '')}
+        {metric === 'eirp' && (
+          <>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">EIRP</div>
+            {bandList.map(band => {
+              const data = bands[band];
+              if (!data) return null;
+              return (
+                <div key={band} className="flex items-center gap-2">
+                  <span className={`text-[10px] w-7 font-mono ${BAND_TEXT_COLORS[band]}`}>
+                    {band.replace('GHz', '')}
+                  </span>
+                  <div className="flex-1">
+                    <EIRPMiniBar
+                      eirpDbm={data.eirpDbm}
+                      eirpMw={data.eirpMw}
+                      maxMwInView={maxEirpMw[band] || data.eirpMw}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {metric === 'gain' && (
+          <>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">Antenna Gain</div>
+            {bandList.map(band => {
+              const data = bands[band];
+              if (!data) return null;
+              return (
+                <div key={band} className="flex items-center justify-between">
+                  <span className={`text-[10px] font-mono ${BAND_TEXT_COLORS[band]}`}>{band}</span>
+                  <span className="font-mono text-xs text-unifi-text">{data.gain} <span className="text-unifi-text-secondary">dBi</span></span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {metric === 'txPower' && (
+          <>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">TX Power</div>
+            {bandList.map(band => {
+              const data = bands[band];
+              if (!data) return null;
+              return (
+                <div key={band} className="flex items-center justify-between">
+                  <span className={`text-[10px] font-mono ${BAND_TEXT_COLORS[band]}`}>{band}</span>
+                  <span className="font-mono text-xs text-unifi-text">{data.maxPower} <span className="text-unifi-text-secondary">dBm</span></span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {metric === 'speed' && (
+          <>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">Max Speed</div>
+            {bandList.map(band => {
+              const data = bands[band];
+              if (!data) return null;
+              return (
+                <div key={band} className="flex items-center justify-between">
+                  <span className={`text-[10px] font-mono ${BAND_TEXT_COLORS[band]}`}>{band}</span>
+                  <span className="font-mono text-xs text-unifi-text">{formatSpeed(data.maxSpeed)}</span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {metric === 'ethernet' && (
+          <>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">Ethernet</div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-unifi-text-secondary">Max Speed</span>
+              <span className="font-mono text-xs text-unifi-text">
+                {ap.ethernetMaxSpeed ? formatSpeed(ap.ethernetMaxSpeed) : <span className="text-unifi-text-secondary/30">—</span>}
               </span>
-              <div className="flex-1">
-                <EIRPMiniBar
-                  eirpDbm={data.eirpDbm}
-                  eirpMw={data.eirpMw}
-                  maxMwInView={maxEirpMw[band] || data.eirpMw}
-                />
-              </div>
             </div>
-          );
-        })}
+            {ap.numberOfPorts > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-unifi-text-secondary">Ports</span>
+                <span className="font-mono text-xs text-unifi-text">{ap.numberOfPorts}</span>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Footer */}

@@ -134,6 +134,7 @@ function App() {
                     onToggle={() => urlState.toggleCompare(ap.slug)}
                     onDetail={() => setDetailSlug(ap.slug)}
                     maxEirpMw={maxEirpMw}
+                    sort={urlState.sort}
                   />
                 ))}
               </div>

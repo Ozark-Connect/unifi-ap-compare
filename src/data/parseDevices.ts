@@ -221,7 +221,7 @@ function stripPrefix(name: string): string {
 function buildDevice(
   rawName: string,
   configs: ConfigEntry[],
-  market: 'us' | 'eu',
+  market: 'us' | 'eu' | 'both',
 ): AccessPoint {
   const name = stripPrefix(rawName);
   const primary = configs[0].candidate;
@@ -346,14 +346,11 @@ export function parseDevices(rawJson: any): AccessPoint[] {
     if (baseVariants.length === 0 && euVariants.length === 0) continue;
 
     // Build US device (from base variants)
+    // If no EU variant exists, device is available in both markets
     if (baseVariants.length > 0) {
       const configs = collectUniqueConfigs(baseVariants);
-      const primary = configs[0].candidate;
-      const d = primary.device;
-      const network = primary.network;
-      const features = network.features || {};
-
-      devices.push(buildDevice(name, configs, 'us'));
+      const market = euVariants.length > 0 ? 'us' : 'both';
+      devices.push(buildDevice(name, configs, market));
     }
 
     // Build EU device (from EU variants, or absent if none)
