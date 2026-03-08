@@ -140,6 +140,22 @@ export const OVERRIDES: OverrideMap = {
 
   // === Enterprise APs ===
 
+  // https://techspecs.ui.com/unifi/wifi/e7
+  // public.json: 2.4 gain=4→5 maxPower=22→23, 5 maxPower=29→30, 6 maxPower=29→30
+  'E7': {
+    us: {
+      configs: [
+        {
+          label: 'Default',
+          bands: {
+            '6GHz': { gain: 6, maxPower: 30 },
+            '5GHz': { gain: 6, maxPower: 30 },
+            '2.4GHz': { gain: 5, maxPower: 23 },
+          },
+        },
+      ],
+    },
+  },
   // https://techspecs.ui.com/unifi/wifi/e7-audience-us
   // public.json: gain missing on both bands; 6 GHz US EIRP cap 36 dBm → narrow max 21, wide max 25
   'E7 Audience': {
