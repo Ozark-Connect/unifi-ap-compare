@@ -62,8 +62,8 @@ export function APTable({ devices, selectedSlugs, onToggle, onDetail, sort, sort
   };
 
   const formatSpeed = (mbps: number) => {
-    if (mbps >= 1000) return `${(mbps / 1000).toFixed(1)}G`;
-    return `${mbps}M`;
+    if (mbps >= 1000) return `${(mbps / 1000).toFixed(1)} Gbps`;
+    return `${mbps} Mbps`;
   };
 
   return (

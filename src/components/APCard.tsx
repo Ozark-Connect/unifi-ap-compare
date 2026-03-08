@@ -10,10 +10,10 @@ interface APCardProps {
   maxEirpMw: Record<BandKey, number>;
 }
 
-const BAND_COLORS: Record<BandKey, string> = {
-  '2.4GHz': 'bg-band-24',
-  '5GHz': 'bg-band-5',
-  '6GHz': 'bg-band-6',
+const BAND_PILL_ACTIVE: Record<BandKey, string> = {
+  '2.4GHz': 'bg-band-24/20 text-band-24',
+  '5GHz': 'bg-band-5/20 text-band-5',
+  '6GHz': 'bg-band-6/20 text-band-6',
 };
 
 const BAND_TEXT_COLORS: Record<BandKey, string> = {
@@ -92,7 +92,7 @@ export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw }: APCardPr
               key={band}
               className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                 bandList.includes(band)
-                  ? `${BAND_COLORS[band]}/20 ${BAND_TEXT_COLORS[band]}`
+                  ? BAND_PILL_ACTIVE[band]
                   : 'bg-unifi-bg/50 text-unifi-text-secondary/30'
               }`}
             >

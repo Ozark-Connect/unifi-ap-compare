@@ -66,7 +66,7 @@ export function EIRPMiniBar({ eirpDbm, eirpMw, maxMwInView }: EIRPMiniBarProps) 
         />
       </div>
       <span className="font-mono text-xs text-unifi-text whitespace-nowrap">
-        {eirpDbm}
+        {eirpDbm} <span className="text-unifi-text-secondary">dBm</span>
       </span>
     </div>
   );
