@@ -1,4 +1,5 @@
 import type { AccessPoint, AntennaConfig, BandData, BandKey } from '../types';
+import { OVERRIDES } from './overrides';
 
 const ICON_BASE = 'https://static.ui.com/fingerprint/ui/icons/';
 
@@ -353,6 +354,32 @@ export function parseDevices(rawJson: any): AccessPoint[] {
       const configs = collectUniqueConfigs(euVariants);
       devices.push(buildDevice(name, configs, 'eu'));
     }
+  }
+
+  // Apply manual overrides
+  for (const ap of devices) {
+    const marketKey = ap.market === 'both' ? 'us' : ap.market;
+    const override = OVERRIDES[ap.name]?.[marketKey];
+    if (!override) continue;
+
+    const newConfigs: AntennaConfig[] = override.configs.map(oc => {
+      const bands: Partial<Record<BandKey, BandData>> = {};
+      const bandList: BandKey[] = [];
+      for (const [bk, bd] of Object.entries(oc.bands) as [BandKey, { gain: number; maxPower: number; maxSpeed?: number }][]) {
+        // Preserve catalog speed if override doesn't specify one
+        const catalogSpeed = ap.configs[0]?.bands[bk]?.maxSpeed ?? 0;
+        const maxSpeed = bd.maxSpeed ?? catalogSpeed;
+        const { eirpDbm, eirpMw } = calcEirp(bd.gain, bd.maxPower);
+        bands[bk] = { gain: bd.gain, maxPower: bd.maxPower, maxSpeed, eirpDbm, eirpMw };
+        bandList.push(bk);
+      }
+      bandList.sort((a, b) => BAND_ORDER.indexOf(a) - BAND_ORDER.indexOf(b));
+      return { label: oc.label, bands, bandList, sysid: ap.configs[0]?.sysid ?? '', model: ap.configs[0]?.model ?? '' };
+    });
+
+    ap.configs = newConfigs;
+    ap.bands = newConfigs[0].bands;
+    ap.bandList = newConfigs[0].bandList;
   }
 
   // Deduplicate slugs (EU and US versions of same product get different slugs)
