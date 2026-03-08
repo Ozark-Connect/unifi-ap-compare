@@ -131,7 +131,7 @@ function App() {
         <div className="max-w-[1600px] mx-auto px-4 flex flex-wrap items-center justify-between gap-2 text-[10px] text-unifi-text-secondary">
           <span>
             Built by{' '}
-            <a href="https://ozarkconnect.com" target="_blank" rel="noopener noreferrer" className="text-unifi-blue-bright hover:underline">
+            <a href="https://ozarkconnect.net" target="_blank" rel="noopener noreferrer" className="text-unifi-blue-bright hover:underline">
               Ozark Connect
             </a>
           </span>

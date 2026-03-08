@@ -62,6 +62,6 @@ https://ozark-connect.github.io/unifi-ap-compare/?compare=access-point-u7-pro,ac
 
 ## License
 
-MIT — Built by [Ozark Connect](https://ozarkconnect.com)
+MIT — Built by [Ozark Connect](https://ozarkconnect.net)
 
 Not affiliated with Ubiquiti Inc.
