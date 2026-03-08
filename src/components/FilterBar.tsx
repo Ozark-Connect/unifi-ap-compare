@@ -182,8 +182,18 @@ export function FilterBar({
             placeholder="Search model, SKU..."
             value={filters.search}
             onChange={e => onFiltersChange({ ...filters, search: e.target.value })}
-            className="w-full pl-9 pr-3 py-2 text-sm bg-unifi-surface border border-unifi-border rounded-lg text-unifi-text placeholder:text-unifi-text-secondary/50 focus:outline-none focus:border-unifi-blue transition-colors"
+            className="w-full pl-9 pr-8 py-2 text-sm bg-unifi-surface border border-unifi-border rounded-lg text-unifi-text placeholder:text-unifi-text-secondary/50 focus:outline-none focus:border-unifi-blue transition-colors"
           />
+          {filters.search && (
+            <button
+              onClick={() => onFiltersChange({ ...filters, search: '' })}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-unifi-text-secondary hover:text-unifi-text transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}

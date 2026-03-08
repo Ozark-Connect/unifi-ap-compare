@@ -20,6 +20,7 @@ function App() {
   );
 
   const [showComparison, setShowComparison] = useState(false);
+  const [detailSlug, setDetailSlug] = useState<string | null>(null);
 
   // Resolve selected devices
   const selectedDevices = useMemo(() => {
@@ -27,6 +28,12 @@ function App() {
       .map(slug => allDevices.find(d => d.slug === slug))
       .filter((d): d is AccessPoint => d !== undefined);
   }, [urlState.compare, allDevices]);
+
+  // Resolve detail device
+  const detailDevice = useMemo(() => {
+    if (!detailSlug) return null;
+    return allDevices.find(d => d.slug === detailSlug) ?? null;
+  }, [detailSlug, allDevices]);
 
   // Calculate max EIRP per band across ALL visible devices (for card mini-bars)
   const maxEirpMw = useMemo(() => {
@@ -46,6 +53,7 @@ function App() {
 
   const handleBack = useCallback(() => {
     setShowComparison(false);
+    setDetailSlug(null);
   }, []);
 
   const handleRemoveFromComparison = useCallback((slug: string) => {
@@ -65,7 +73,13 @@ function App() {
       />
 
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 py-4 space-y-4">
-        {showComparison && selectedDevices.length >= 2 ? (
+        {detailDevice ? (
+          <ComparisonView
+            devices={[detailDevice]}
+            onRemove={() => setDetailSlug(null)}
+            onBack={handleBack}
+          />
+        ) : showComparison && selectedDevices.length >= 2 ? (
           <ComparisonView
             devices={selectedDevices}
             onRemove={handleRemoveFromComparison}
@@ -104,6 +118,7 @@ function App() {
                 devices={devices}
                 selectedSlugs={urlState.compare}
                 onToggle={urlState.toggleCompare}
+                onDetail={(slug) => setDetailSlug(slug)}
                 sort={urlState.sort}
                 sortDir={urlState.sortDir}
                 onSortChange={urlState.setSort}
@@ -117,6 +132,7 @@ function App() {
                     ap={ap}
                     selected={urlState.compare.includes(ap.slug)}
                     onToggle={() => urlState.toggleCompare(ap.slug)}
+                    onDetail={() => setDetailSlug(ap.slug)}
                     maxEirpMw={maxEirpMw}
                   />
                 ))}
@@ -126,8 +142,8 @@ function App() {
         )}
       </main>
 
-      {/* Comparison tray (only when not in comparison view) */}
-      {!showComparison && (
+      {/* Comparison tray (only when not in comparison or detail view) */}
+      {!showComparison && !detailDevice && (
         <ComparisonTray
           selectedDevices={selectedDevices}
           onRemove={(slug) => urlState.toggleCompare(slug)}
@@ -154,7 +170,7 @@ function App() {
       </footer>
 
       {/* Bottom spacer when tray is visible */}
-      {selectedDevices.length > 0 && !showComparison && (
+      {selectedDevices.length > 0 && !showComparison && !detailDevice && (
         <div className="h-20 md:h-16" />
       )}
     </div>

@@ -6,30 +6,31 @@ interface APCardProps {
   ap: AccessPoint;
   selected: boolean;
   onToggle: () => void;
+  onDetail: () => void;
   maxEirpMw: Record<BandKey, number>;
 }
 
 const BAND_COLORS: Record<BandKey, string> = {
-  '2.4GHz': 'bg-unifi-amber',
-  '5GHz': 'bg-unifi-blue-bright',
-  '6GHz': 'bg-unifi-green',
+  '2.4GHz': 'bg-band-24',
+  '5GHz': 'bg-band-5',
+  '6GHz': 'bg-band-6',
 };
 
 const BAND_TEXT_COLORS: Record<BandKey, string> = {
-  '2.4GHz': 'text-unifi-amber',
-  '5GHz': 'text-unifi-blue-bright',
-  '6GHz': 'text-unifi-green',
+  '2.4GHz': 'text-band-24',
+  '5GHz': 'text-band-5',
+  '6GHz': 'text-band-6',
 };
 
 const WIFI_GEN_COLORS: Record<string, string> = {
   'Wi-Fi 7': 'bg-purple-500/20 text-purple-400',
-  'Wi-Fi 6E': 'bg-unifi-green/20 text-unifi-green',
+  'Wi-Fi 6E': 'bg-band-6/20 text-band-6',
   'Wi-Fi 6': 'bg-unifi-blue/20 text-unifi-blue-bright',
   'Wi-Fi 5': 'bg-unifi-amber/20 text-unifi-amber',
   'Wi-Fi 4': 'bg-gray-500/20 text-gray-400',
 };
 
-export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
+export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw }: APCardProps) {
   const [imgError, setImgError] = useState(false);
 
   // Use the active config's bands
@@ -44,7 +45,7 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
       }`}
     >
       {/* Top section: image + info */}
-      <div className="p-4 pb-3">
+      <div className="p-4 pb-3 cursor-pointer" onClick={onDetail}>
         <div className="flex gap-3">
           <div className="w-16 h-16 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
             {!imgError ? (
@@ -102,7 +103,7 @@ export function APCard({ ap, selected, onToggle, maxEirpMw }: APCardProps) {
       </div>
 
       {/* EIRP section */}
-      <div className="px-4 py-3 bg-unifi-bg/30 border-t border-unifi-border/50 space-y-2">
+      <div className="px-4 py-3 bg-unifi-bg/30 border-t border-unifi-border/50 space-y-2 cursor-pointer" onClick={onDetail}>
         <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">
           EIRP
         </div>

@@ -15,6 +15,9 @@ export default {
         'unifi-green': '#22c55e',
         'unifi-amber': '#f59e0b',
         'unifi-red': '#ef4444',
+        'band-24': '#fbbf24',
+        'band-5': '#3b82f6',
+        'band-6': '#a855f7',
       },
       fontFamily: {
         mono: ['"JetBrains Mono"', '"Source Code Pro"', 'monospace'],

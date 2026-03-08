@@ -10,9 +10,9 @@ interface ComparisonViewProps {
 
 const BAND_ORDER: BandKey[] = ['2.4GHz', '5GHz', '6GHz'];
 const BAND_COLORS: Record<BandKey, string> = {
-  '2.4GHz': 'text-unifi-amber',
-  '5GHz': 'text-unifi-blue-bright',
-  '6GHz': 'text-unifi-green',
+  '2.4GHz': 'text-band-24',
+  '5GHz': 'text-band-5',
+  '6GHz': 'text-band-6',
 };
 
 function formatSpeed(mbps: number) {
@@ -230,26 +230,28 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
           Back to grid
         </button>
 
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-1.5 text-xs text-unifi-text-secondary cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={showDeltas}
-              onChange={e => setShowDeltas(e.target.checked)}
-              className="accent-unifi-blue"
-            />
-            Show deltas
-          </label>
-          <label className="flex items-center gap-1.5 text-xs text-unifi-text-secondary cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={hideIdentical}
-              onChange={e => setHideIdentical(e.target.checked)}
-              className="accent-unifi-blue"
-            />
-            Hide identical
-          </label>
-        </div>
+        {devices.length > 1 && (
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1.5 text-xs text-unifi-text-secondary cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={showDeltas}
+                onChange={e => setShowDeltas(e.target.checked)}
+                className="accent-unifi-blue"
+              />
+              Show deltas
+            </label>
+            <label className="flex items-center gap-1.5 text-xs text-unifi-text-secondary cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={hideIdentical}
+                onChange={e => setHideIdentical(e.target.checked)}
+                className="accent-unifi-blue"
+              />
+              Hide identical
+            </label>
+          </div>
+        )}
       </div>
 
       {/* Comparison table */}
@@ -263,14 +265,16 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                 <th key={ap.slug} className="p-3 min-w-[150px] md:min-w-[180px] text-center align-top">
                   <div className="flex flex-col items-center gap-2">
                     <div className="relative group">
-                      <button
-                        onClick={() => onRemove(ap.slug)}
-                        className="absolute -top-1 -right-1 bg-unifi-surface-2 border border-unifi-border rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-unifi-text-secondary hover:text-unifi-red z-10"
-                      >
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+                      {devices.length > 1 && (
+                        <button
+                          onClick={() => onRemove(ap.slug)}
+                          className="absolute -top-1 -right-1 bg-unifi-surface-2 border border-unifi-border rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-unifi-text-secondary hover:text-unifi-red z-10"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
                       <div className="w-14 h-14 bg-white/5 rounded-lg flex items-center justify-center">
                         {!imgErrors.has(ap.id) ? (
                           <img

@@ -1,5 +1,5 @@
 import type { AccessPoint, AntennaConfig, BandData, BandKey } from '../types';
-import { OVERRIDES } from './overrides';
+import { OVERRIDES, EXCLUDED_PRODUCTS } from './overrides';
 
 const ICON_BASE = 'https://static.ui.com/fingerprint/ui/icons/';
 
@@ -62,7 +62,7 @@ function parseBands(radios: Record<string, RawRadio>): { bands: Partial<Record<B
     const maxPower = radio.maxPower ?? 0;
     const maxSpeed = radio.maxSpeedMegabitsPerSecond ?? 0;
 
-    if (maxPower === 0 && gain === 0 && maxSpeed === 0) continue;
+    if (maxPower === 0 && gain === 0) continue;
 
     const { eirpDbm, eirpMw } = calcEirp(gain, maxPower);
     bands[bandKey] = { gain, maxPower, maxSpeed, eirpDbm, eirpMw };
@@ -214,11 +214,16 @@ interface Candidate {
 
 type ConfigEntry = { candidate: Candidate; radios: Record<string, RawRadio> };
 
+function stripPrefix(name: string): string {
+  return name.replace(/^Access Point /, '');
+}
+
 function buildDevice(
-  name: string,
+  rawName: string,
   configs: ConfigEntry[],
   market: 'us' | 'eu',
 ): AccessPoint {
+  const name = stripPrefix(rawName);
   const primary = configs[0].candidate;
   const d = primary.device;
   const network = primary.network;
@@ -333,6 +338,8 @@ export function parseDevices(rawJson: any): AccessPoint[] {
   }
 
   for (const [name, group] of groups) {
+    if (EXCLUDED_PRODUCTS.has(name)) continue;
+
     const euVariants = group.filter(c => c.isEU);
     const baseVariants = group.filter(c => !c.isEU && !c.isColor);
 

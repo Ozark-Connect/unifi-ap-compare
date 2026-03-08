@@ -5,6 +5,7 @@ interface APTableProps {
   devices: AccessPoint[];
   selectedSlugs: string[];
   onToggle: (slug: string) => void;
+  onDetail: (slug: string) => void;
   sort: SortField;
   sortDir: SortDir;
   onSortChange: (s: SortField) => void;
@@ -12,9 +13,9 @@ interface APTableProps {
 }
 
 const BAND_DOT: Record<BandKey, string> = {
-  '2.4GHz': 'bg-unifi-amber',
-  '5GHz': 'bg-unifi-blue-bright',
-  '6GHz': 'bg-unifi-green',
+  '2.4GHz': 'bg-band-24',
+  '5GHz': 'bg-band-5',
+  '6GHz': 'bg-band-6',
 };
 
 interface ColDef {
@@ -40,13 +41,13 @@ const COLUMNS: ColDef[] = [
 
 const GEN_COLORS: Record<string, string> = {
   'Wi-Fi 7': 'text-purple-400',
-  'Wi-Fi 6E': 'text-unifi-green',
+  'Wi-Fi 6E': 'text-band-6',
   'Wi-Fi 6': 'text-unifi-blue-bright',
   'Wi-Fi 5': 'text-unifi-amber',
   'Wi-Fi 4': 'text-gray-400',
 };
 
-export function APTable({ devices, selectedSlugs, onToggle, sort, sortDir, onSortChange, onSortDirChange }: APTableProps) {
+export function APTable({ devices, selectedSlugs, onToggle, onDetail, sort, sortDir, onSortChange, onSortDirChange }: APTableProps) {
   const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
 
   const handleSort = (col: ColDef) => {
@@ -117,7 +118,7 @@ export function APTable({ devices, selectedSlugs, onToggle, sort, sortDir, onSor
                 </td>
 
                 {/* Model */}
-                <td className="px-3 py-2">
+                <td className="px-3 py-2 cursor-pointer" onClick={() => onDetail(ap.slug)}>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 flex-shrink-0 bg-white/5 rounded flex items-center justify-center">
                       {!imgErrors.has(ap.id) ? (
