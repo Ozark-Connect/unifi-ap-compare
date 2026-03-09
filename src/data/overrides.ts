@@ -246,6 +246,24 @@ export const OVERRIDES: OverrideMap = {
     },
   },
 
+  // https://techspecs.ui.com/unifi/wifi/e7-campus-indoor
+  // public.json has 2.4/5 GHz swapped! Correct: 9/12/12 dBi, same as E7 Campus
+  // 6 GHz US EIRP capped at 36 dBm → 12 dBi gain → max 24 dBm TX
+  'E7 Campus Indoor': {
+    us: {
+      configs: [
+        {
+          label: 'Default',
+          bands: {
+            '6GHz': { gain: 12, maxPower: 24 },
+            '5GHz': { gain: 12, maxPower: 30 },
+            '2.4GHz': { gain: 9, maxPower: 23 },
+          },
+        },
+      ],
+    },
+  },
+
   // === Specialty APs ===
 
   // https://techspecs.ui.com/unifi/wifi/uk-ultra
