@@ -10,8 +10,8 @@ export function Header({ market, onMarketChange, dataSource }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-unifi-surface/95 backdrop-blur-sm border-b border-unifi-border">
       <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 shrink-0">
-          <h1 className="text-lg font-bold tracking-tight whitespace-nowrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <h1 className="text-lg font-bold tracking-tight truncate">
             <a href="." className="hover:opacity-80 transition-opacity">
               <span className="text-unifi-blue-bright">UniFi</span> AP Compare
             </a>
