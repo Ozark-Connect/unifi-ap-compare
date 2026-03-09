@@ -64,8 +64,12 @@ export type SortField =
   | 'gain_2.4GHz'
   | 'gain_5GHz'
   | 'gain_6GHz'
+  | 'txPower_2.4GHz'
   | 'txPower_5GHz'
+  | 'txPower_6GHz'
+  | 'maxSpeed_2.4GHz'
   | 'maxSpeed_5GHz'
+  | 'maxSpeed_6GHz'
   | 'ethernetMaxSpeed';
 
 export type SortDir = 'asc' | 'desc';
