@@ -30,6 +30,11 @@ export interface DeviceOverride {
 
 type OverrideMap = Record<string, Partial<Record<'us' | 'eu', DeviceOverride>>>;
 
+/** Devices only available in the US market (no EU variant, not sold in EU) */
+export const US_ONLY_PRODUCTS: Set<string> = new Set([
+  'Access Point E7 Campus Indoor',
+]);
+
 /** Legacy devices to hide — incomplete catalog data, no longer sold */
 export const EXCLUDED_PRODUCTS: Set<string> = new Set([
   'Access Point',

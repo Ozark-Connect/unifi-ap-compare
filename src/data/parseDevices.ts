@@ -1,5 +1,5 @@
 import type { AccessPoint, AntennaConfig, BandData, BandKey } from '../types';
-import { OVERRIDES, EXCLUDED_PRODUCTS } from './overrides';
+import { OVERRIDES, EXCLUDED_PRODUCTS, US_ONLY_PRODUCTS } from './overrides';
 
 const ICON_BASE = 'https://static.ui.com/fingerprint/ui/icons/';
 
@@ -349,7 +349,7 @@ export function parseDevices(rawJson: any): AccessPoint[] {
     // If no EU variant exists, device is available in both markets
     if (baseVariants.length > 0) {
       const configs = collectUniqueConfigs(baseVariants);
-      const market = euVariants.length > 0 ? 'us' : 'both';
+      const market = euVariants.length > 0 || US_ONLY_PRODUCTS.has(name) ? 'us' : 'both';
       devices.push(buildDevice(name, configs, market));
     }
 
