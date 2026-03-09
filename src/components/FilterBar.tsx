@@ -17,12 +17,12 @@ interface FilterBarProps {
 }
 
 const SORT_OPTIONS: { value: SortField; label: string }[] = [
+  { value: 'eirp_6GHz', label: 'EIRP 6 GHz (signal strength)' },
   { value: 'eirp_5GHz', label: 'EIRP 5 GHz (signal strength)' },
   { value: 'eirp_2.4GHz', label: 'EIRP 2.4 GHz (signal strength)' },
-  { value: 'eirp_6GHz', label: 'EIRP 6 GHz (signal strength)' },
+  { value: 'maxSpeed_6GHz', label: 'Max Speed 6 GHz' },
   { value: 'maxSpeed_5GHz', label: 'Max Speed 5 GHz' },
   { value: 'maxSpeed_2.4GHz', label: 'Max Speed 2.4 GHz' },
-  { value: 'maxSpeed_6GHz', label: 'Max Speed 6 GHz' },
   { value: 'wifiGeneration', label: 'Wi-Fi Gen' },
   { value: 'name', label: 'Name' },
   { value: 'ethernetMaxSpeed', label: 'Ethernet Speed' },
