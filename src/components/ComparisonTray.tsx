@@ -69,16 +69,9 @@ export function ComparisonTray({ selectedDevices, onRemove, onClear, onCompare }
       {/* Mobile FAB */}
       <button
         onClick={onCompare}
-        className="md:hidden fixed bottom-6 right-6 z-40 tray-enter bg-unifi-blue hover:bg-unifi-blue-bright text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-95"
+        className="md:hidden fixed bottom-6 right-6 z-40 tray-enter bg-unifi-blue hover:bg-unifi-blue-bright text-white shadow-2xl rounded-full px-5 py-3 flex items-center gap-2 text-sm font-semibold transition-all active:scale-95"
       >
-        <div className="relative">
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <span className="absolute -top-2 -right-2 bg-white text-unifi-blue text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-            {selectedDevices.length}
-          </span>
-        </div>
+        Compare ({selectedDevices.length})
       </button>
     </>
   );
