@@ -122,7 +122,7 @@ export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw, sort }: AP
       <div className="px-4 py-3 bg-unifi-bg/30 border-t border-unifi-border/50 space-y-2 cursor-pointer" onClick={onDetail}>
         {metric === 'eirp' && (
           <>
-            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold">EIRP</div>
+            <div className="text-[10px] text-unifi-text-secondary uppercase tracking-wider font-semibold" title="Effective Isotropic Radiated Power — combined TX power + antenna gain">EIRP</div>
             {bandList.map(band => {
               const data = bands[band];
               if (!data) return null;
@@ -232,7 +232,7 @@ export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw, sort }: AP
               Selected
             </>
           ) : (
-            'Compare'
+            '+ Compare'
           )}
         </button>
       </div>

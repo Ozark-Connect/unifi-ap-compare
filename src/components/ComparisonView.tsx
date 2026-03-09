@@ -60,6 +60,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
   const sections = useMemo(() => {
     type Row = {
       label: string;
+      tooltip?: string;
       bandLabel?: string;
       values: (string | number | null)[];
       rawValues?: (number | null)[];
@@ -91,6 +92,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
 
       eirpRows.push({
         label: 'EIRP',
+        tooltip: 'Effective Isotropic Radiated Power — combined TX power + antenna gain',
         bandLabel: band,
         values: activeConfigs.map(c => {
           const data = c.bands[band];
@@ -353,7 +355,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
 
                   return (
                     <tr key={`row-${si}-${ri}`} className="border-t border-unifi-border/30">
-                      <td className="sticky left-0 z-10 bg-unifi-bg px-3 py-2 text-xs text-unifi-text-secondary whitespace-nowrap">
+                      <td className="sticky left-0 z-10 bg-unifi-bg px-3 py-2 text-xs text-unifi-text-secondary whitespace-nowrap" title={row.tooltip}>
                         <div>{row.label}</div>
                         {row.bandLabel && (
                           <div className={`text-[10px] font-mono ${BAND_COLORS[row.bandLabel as BandKey] || ''}`}>

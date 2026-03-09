@@ -23,6 +23,7 @@ interface ColDef {
   label: string;
   sortable: boolean;
   className?: string;
+  title?: string;
 }
 
 const COLUMNS: ColDef[] = [
@@ -30,9 +31,9 @@ const COLUMNS: ColDef[] = [
   { key: 'name', label: 'Model', sortable: true, className: 'min-w-[180px]' },
   { key: 'wifiGeneration', label: 'Gen', sortable: true, className: 'w-20' },
   { key: 'bands', label: 'Bands', sortable: false, className: 'w-20' },
-  { key: 'eirp_2.4GHz', label: 'EIRP 2.4G', sortable: true, className: 'w-24' },
-  { key: 'eirp_5GHz', label: 'EIRP 5G', sortable: true, className: 'w-24' },
-  { key: 'eirp_6GHz', label: 'EIRP 6G', sortable: true, className: 'w-24' },
+  { key: 'eirp_2.4GHz', label: 'EIRP 2.4G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
+  { key: 'eirp_5GHz', label: 'EIRP 5G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
+  { key: 'eirp_6GHz', label: 'EIRP 6G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
   { key: 'gain_5GHz', label: 'Gain 5G', sortable: true, className: 'w-20' },
   { key: 'txPower_5GHz', label: 'TX 5G', sortable: true, className: 'w-20' },
   { key: 'maxSpeed_5GHz', label: 'Speed 5G', sortable: true, className: 'w-24' },
@@ -78,6 +79,7 @@ export function APTable({ devices, selectedSlugs, onToggle, onDetail, sort, sort
                   col.sortable ? 'cursor-pointer hover:text-unifi-text select-none' : ''
                 }`}
                 onClick={() => handleSort(col)}
+                title={col.title}
               >
                 <div className="flex items-center gap-1">
                   {col.label}
