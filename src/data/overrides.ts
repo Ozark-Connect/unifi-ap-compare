@@ -188,14 +188,14 @@ export const OVERRIDES: OverrideMap = {
         {
           label: 'Narrow (50°)',
           bands: {
-            '6GHz': { gain: 15, maxPower: 30 },
+            '6GHz': { gain: 15, maxPower: 21 },
             '5GHz': { gain: 15, maxPower: 30 },
           },
         },
         {
           label: 'Wide (90°)',
           bands: {
-            '6GHz': { gain: 11, maxPower: 30 },
+            '6GHz': { gain: 11, maxPower: 25 },
             '5GHz': { gain: 11, maxPower: 30 },
           },
         },
