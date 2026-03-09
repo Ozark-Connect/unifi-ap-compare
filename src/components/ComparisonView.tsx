@@ -16,7 +16,7 @@ const BAND_COLORS: Record<BandKey, string> = {
 };
 
 function formatSpeed(mbps: number) {
-  if (mbps >= 1000) return `${(mbps / 1000).toFixed(1)} Gbps`;
+  if (mbps >= 1000) return `${parseFloat((mbps / 1000).toFixed(1))} Gbps`;
   return `${mbps} Mbps`;
 }
 
