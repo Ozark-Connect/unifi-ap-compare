@@ -27,6 +27,7 @@ interface ConfigOverride {
 export interface DeviceOverride {
   configs: ConfigOverride[];
   wifiGeneration?: 'Wi-Fi 4' | 'Wi-Fi 5' | 'Wi-Fi 6' | 'Wi-Fi 6E' | 'Wi-Fi 7';
+  numberOfPorts?: number;
 }
 
 type OverrideMap = Record<string, Partial<Record<'us' | 'eu', DeviceOverride>>>;
@@ -149,8 +150,10 @@ export const OVERRIDES: OverrideMap = {
 
   // https://techspecs.ui.com/unifi/wifi/e7
   // public.json: 2.4 gain=4→5 maxPower=22→23, 5 maxPower=29→30, 6 maxPower=29→30
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'E7': {
     us: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Default',
@@ -165,8 +168,10 @@ export const OVERRIDES: OverrideMap = {
   },
   // https://techspecs.ui.com/unifi/wifi/e7-audience-us
   // public.json: gain missing on both bands; 6 GHz US EIRP cap 36 dBm → narrow max 21, wide max 25
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'E7 Audience': {
     us: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Narrow (50°)',
@@ -185,6 +190,7 @@ export const OVERRIDES: OverrideMap = {
       ],
     },
     eu: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Narrow (50°)',
@@ -205,8 +211,10 @@ export const OVERRIDES: OverrideMap = {
   },
   // https://techspecs.ui.com/unifi/wifi/e7-audience-indoor
   // Same antenna hardware as E7 Audience; same 6 GHz EIRP cap applies
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'E7 Audience Indoor': {
     us: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Narrow (50°)',
@@ -227,8 +235,10 @@ export const OVERRIDES: OverrideMap = {
   },
   // https://techspecs.ui.com/unifi/wifi/e7-campus
   // public.json: ALL values wrong — gain=4/6/6→9/12/12, maxPower=22/29/29→23/30/24
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'E7 Campus': {
     us: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Default',
@@ -241,6 +251,7 @@ export const OVERRIDES: OverrideMap = {
       ],
     },
     eu: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Default',
@@ -256,8 +267,10 @@ export const OVERRIDES: OverrideMap = {
   // https://techspecs.ui.com/unifi/wifi/e7-campus-indoor
   // public.json has 2.4/5 GHz swapped! Correct: 9/12/12 dBi, same as E7 Campus
   // 6 GHz US EIRP capped at 36 dBm → 12 dBi gain → max 24 dBm TX
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'E7 Campus Indoor': {
     us: {
+      numberOfPorts: 2,
       configs: [
         {
           label: 'Default',
@@ -269,6 +282,30 @@ export const OVERRIDES: OverrideMap = {
         },
       ],
     },
+  },
+
+  // XG: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  'XG': {
+    us: { configs: [], numberOfPorts: 2 },
+  },
+
+  // === Wi-Fi 5 APs with dual GbE (catalog says 1) ===
+
+  // AC Pro: 2x GbE — catalog says 1
+  'AC Pro': {
+    us: { configs: [], numberOfPorts: 2 },
+  },
+  // AC HD: 2x GbE — catalog says 1
+  'AC HD': {
+    us: { configs: [], numberOfPorts: 2 },
+  },
+  // AC SHD: 2x GbE — catalog says 1
+  'AC SHD': {
+    us: { configs: [], numberOfPorts: 2 },
+  },
+  // AC Mesh Pro: 2x GbE — catalog says 1
+  'AC Mesh Pro': {
+    us: { configs: [], numberOfPorts: 2 },
   },
 
   // === Wi-Fi 7 APs missing 'be' feature flag in catalog ===

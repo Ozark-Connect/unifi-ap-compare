@@ -68,6 +68,8 @@ function applyFilters(devices: AccessPoint[], filters: FilterState): AccessPoint
       if (!matches) return false;
     }
 
+    if (filters.multiPort && ap.numberOfPorts <= 1) return false;
+
     if (filters.search) {
       const words = filters.search.toLowerCase().split(/\s+/).filter(Boolean);
       const searchable = [

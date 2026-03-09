@@ -372,6 +372,10 @@ export function parseDevices(rawJson: any): AccessPoint[] {
       ap.features.muMimo = override.wifiGeneration !== 'Wi-Fi 4';
     }
 
+    if (override.numberOfPorts !== undefined) {
+      ap.numberOfPorts = override.numberOfPorts;
+    }
+
     if (override.configs.length === 0) continue;
 
     const newConfigs: AntennaConfig[] = override.configs.map(oc => {

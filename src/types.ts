@@ -83,6 +83,7 @@ export interface FilterState {
   formFactor: string[];
   environment: ('indoor' | 'outdoor' | 'both')[];
   status: string[];
+  multiPort: boolean;
   search: string;
 }
 
@@ -93,5 +94,6 @@ export const DEFAULT_FILTERS: FilterState = {
   formFactor: [],
   environment: [],
   status: [],
+  multiPort: false,
   search: '',
 };

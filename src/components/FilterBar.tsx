@@ -130,6 +130,7 @@ export function FilterBar({
     wifiChanged ||
     filters.formFactor.length > 0 ||
     filters.environment.length > 0 ||
+    filters.multiPort ||
     filters.search !== '' ||
     (filters.deviceType.length > 0 && filters.deviceType.length < 2);
 
@@ -168,6 +169,16 @@ export function FilterBar({
         selected={filters.environment}
         onChange={vals => onFiltersChange({ ...filters, environment: vals as FilterState['environment'] })}
       />
+      <button
+        onClick={() => onFiltersChange({ ...filters, multiPort: !filters.multiPort })}
+        className={`flex items-center gap-1.5 px-3 py-2 text-xs rounded-lg border transition-all ${
+          filters.multiPort
+            ? 'border-unifi-blue bg-unifi-blue/10 text-unifi-blue-bright'
+            : 'border-unifi-border bg-unifi-surface hover:border-unifi-text-secondary text-unifi-text-secondary'
+        }`}
+      >
+        Multi-port
+      </button>
     </>
   );
 

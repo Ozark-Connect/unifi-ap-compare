@@ -46,6 +46,9 @@ function parseURL(): URLState {
         case 'status':
           filters.status = values;
           break;
+        case 'mp':
+          filters.multiPort = vals === '1';
+          break;
       }
     }
   }
@@ -78,6 +81,7 @@ function serializeURL(state: URLState) {
   if (wifiChanged) filterParts.push(`wifi:${f.wifiGeneration.length === 0 ? 'all' : f.wifiGeneration.map(v => v.replace('Wi-Fi ', '')).join(',')}`);
   if (f.formFactor.length > 0) filterParts.push(`form:${f.formFactor.join(',')}`);
   if (f.environment.length > 0) filterParts.push(`env:${f.environment.join(',')}`);
+  if (f.multiPort) filterParts.push('mp:1');
 
   if (filterParts.length > 0) params.set('filters', filterParts.join(';'));
 
