@@ -12,7 +12,9 @@ export function Header({ market, onMarketChange, dataSource }: HeaderProps) {
       <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <h1 className="text-lg font-bold tracking-tight truncate">
-            <span className="text-unifi-blue-bright">UniFi</span> AP Compare
+            <a href="." className="hover:opacity-80 transition-opacity">
+              <span className="text-unifi-blue-bright">UniFi</span> AP Compare
+            </a>
           </h1>
           {dataSource === 'fallback' && (
             <span className="text-[10px] bg-unifi-amber/20 text-unifi-amber px-1.5 py-0.5 rounded hidden sm:inline">
