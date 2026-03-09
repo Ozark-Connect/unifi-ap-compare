@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { AccessPoint, FilterState, SortField, SortDir, BandKey, Market } from '../types';
 
-// EU ETSI EIRP limits (dBm) — using max allowed (DFS outdoor where applicable)
+// EU ETSI EIRP limits (dBm) - using max allowed (DFS outdoor where applicable)
 const EU_EIRP_LIMITS: Record<BandKey, number> = {
   '2.4GHz': 20,  // 100 mW ETSI
   '5GHz': 30,    // 1 W UNII-2e DFS (5470-5725 MHz)

@@ -163,7 +163,7 @@ function App() {
             </a>
           </span>
           <span>
-            Data: {dataSource === 'live' ? 'Live' : 'Cached'} from Ubiquiti public catalog
+            Data: Ubiquiti catalog ({dataSource === 'live' ? 'live' : 'cached'}) + manual corrections
             {' · '}
             Not affiliated with Ubiquiti Inc.
           </span>

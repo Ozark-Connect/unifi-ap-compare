@@ -131,7 +131,7 @@ function isRelevantDevice(d: RawDevice): boolean {
 }
 
 /** Check if two radio configs have meaningfully different antenna/RF characteristics.
- *  Only gain and power matter for EIRP — speed-only differences are just hardware revisions. */
+ *  Only gain and power matter for EIRP - speed-only differences are just hardware revisions. */
 function radiosAreDifferent(a: Record<string, RawRadio>, b: Record<string, RawRadio>): boolean {
   const aBands = Object.keys(a).filter(k => BAND_MAP[k]).sort();
   const bBands = Object.keys(b).filter(k => BAND_MAP[k]).sort();

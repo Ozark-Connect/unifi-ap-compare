@@ -6,13 +6,13 @@
  * Values sourced from ApModelCatalog.cs (NetworkOptimizer) and
  * https://techspecs.ui.com/unifi/wifi/
  *
- * EIRP is auto-calculated — just provide gain and maxPower.
+ * EIRP is auto-calculated - just provide gain and maxPower.
  */
 
 interface BandOverride {
   gain: number;
   maxPower: number;
-  maxSpeed?: number;  // optional — keeps catalog value if omitted
+  maxSpeed?: number;  // optional - keeps catalog value if omitted
 }
 
 interface ConfigOverride {
@@ -39,7 +39,7 @@ export const US_ONLY_PRODUCTS: Set<string> = new Set([
   'Access Point E7 Audience Indoor',
 ]);
 
-/** Legacy devices to hide — incomplete catalog data, no longer sold */
+/** Legacy devices to hide - incomplete catalog data, no longer sold */
 export const EXCLUDED_PRODUCTS: Set<string> = new Set([
   'Access Point',
   'Access Point Long-Range',
@@ -151,7 +151,7 @@ export const OVERRIDES: OverrideMap = {
 
   // https://techspecs.ui.com/unifi/wifi/e7
   // public.json: 2.4 gain=4→5 maxPower=22→23, 5 maxPower=29→30, 6 maxPower=29→30
-  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'E7': {
     us: {
       numberOfPorts: 2,
@@ -170,7 +170,7 @@ export const OVERRIDES: OverrideMap = {
   },
   // https://techspecs.ui.com/unifi/wifi/e7-audience-us
   // public.json: gain missing on both bands; 6 GHz US EIRP cap 36 dBm → narrow max 21, wide max 25
-  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'E7 Audience': {
     us: {
       numberOfPorts: 2,
@@ -215,7 +215,7 @@ export const OVERRIDES: OverrideMap = {
   },
   // https://techspecs.ui.com/unifi/wifi/e7-audience-indoor
   // Same antenna hardware as E7 Audience; same 6 GHz EIRP cap applies
-  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'E7 Audience Indoor': {
     us: {
       numberOfPorts: 2,
@@ -239,8 +239,8 @@ export const OVERRIDES: OverrideMap = {
     },
   },
   // https://techspecs.ui.com/unifi/wifi/e7-campus
-  // public.json: ALL values wrong — gain=4/6/6→9/12/12, maxPower=22/29/29→23/30/24
-  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // public.json: ALL values wrong - gain=4/6/6→9/12/12, maxPower=22/29/29→23/30/24
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'E7 Campus': {
     us: {
       numberOfPorts: 2,
@@ -274,7 +274,7 @@ export const OVERRIDES: OverrideMap = {
   // https://techspecs.ui.com/unifi/wifi/e7-campus-indoor
   // public.json has 2.4/5 GHz swapped! Correct: 9/12/12 dBi, same as E7 Campus
   // 6 GHz US EIRP capped at 36 dBm → 12 dBi gain → max 24 dBm TX
-  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // Ports: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'E7 Campus Indoor': {
     us: {
       numberOfPorts: 2,
@@ -292,61 +292,61 @@ export const OVERRIDES: OverrideMap = {
     },
   },
 
-  // XG: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
+  // XG: 1x 10GbE + 1x GbE (PoE++ on both) - catalog says 1
   'XG': {
     us: { configs: [], numberOfPorts: 2, portConfig: '1x 10GbE + 1x GbE, PoE++' },
   },
 
   // === Wi-Fi 5 APs with dual GbE (catalog says 1) ===
 
-  // AC Pro: 2x GbE — catalog says 1
+  // AC Pro: 2x GbE - catalog says 1
   'AC Pro': {
     us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
-  // AC HD: 2x GbE — catalog says 1
+  // AC HD: 2x GbE - catalog says 1
   'AC HD': {
     us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
-  // AC SHD: 2x GbE — catalog says 1
+  // AC SHD: 2x GbE - catalog says 1
   'AC SHD': {
     us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
-  // AC Mesh Pro: 2x GbE — catalog says 1
+  // AC Mesh Pro: 2x GbE - catalog says 1
   'AC Mesh Pro': {
     us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
-  // AC: 2x GbE — catalog correct
+  // AC: 2x GbE - catalog correct
   'AC': {
     us: { configs: [], portConfig: '2x GbE' },
   },
-  // AC Outdoor: 2x GbE — catalog correct
+  // AC Outdoor: 2x GbE - catalog correct
   'AC Outdoor': {
     us: { configs: [], portConfig: '2x GbE' },
   },
-  // U6 Mesh Pro: 2x GbE — catalog correct
+  // U6 Mesh Pro: 2x GbE - catalog correct
   'U6 Mesh Pro': {
     us: { configs: [], portConfig: '2x GbE' },
   },
 
-  // === In-Wall APs — port descriptions (catalog port counts correct) ===
+  // === In-Wall APs - port descriptions (catalog port counts correct) ===
 
-  // U6 In-Wall: 5 ports — catalog correct
+  // U6 In-Wall: 5 ports - catalog correct
   'U6 In-Wall': {
     us: { configs: [], portConfig: '1x GbE uplink, 4x GbE switch (1 PoE out)' },
   },
-  // U6 Enterprise In-Wall: 5 ports — catalog correct
+  // U6 Enterprise In-Wall: 5 ports - catalog correct
   'U6 Enterprise In-Wall': {
     us: { configs: [], portConfig: '1x 2.5GbE uplink, 4x GbE switch (1 PoE out)' },
   },
-  // AC In-Wall: 3 ports — catalog correct
+  // AC In-Wall: 3 ports - catalog correct
   'AC In-Wall': {
     us: { configs: [], portConfig: '1x GbE uplink, 2x GbE switch' },
   },
-  // AC In-Wall Pro: 3 ports — catalog correct
+  // AC In-Wall Pro: 3 ports - catalog correct
   'AC In-Wall Pro': {
     us: { configs: [], portConfig: '1x GbE uplink, 2x GbE switch' },
   },
-  // In-Wall HD: 5 ports — catalog correct
+  // In-Wall HD: 5 ports - catalog correct
   'In-Wall HD': {
     us: { configs: [], portConfig: '1x GbE uplink, 4x GbE switch (1 PoE out)' },
   },

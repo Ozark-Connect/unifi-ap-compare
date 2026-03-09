@@ -31,9 +31,9 @@ const COLUMNS: ColDef[] = [
   { key: 'name', label: 'Model', sortable: true, className: 'min-w-[180px]' },
   { key: 'wifiGeneration', label: 'Gen', sortable: true, className: 'w-20' },
   { key: 'bands', label: 'Bands', sortable: false, className: 'w-20' },
-  { key: 'eirp_2.4GHz', label: 'EIRP 2.4G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
-  { key: 'eirp_5GHz', label: 'EIRP 5G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
-  { key: 'eirp_6GHz', label: 'EIRP 6G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power — combined TX power + antenna gain' },
+  { key: 'eirp_2.4GHz', label: 'EIRP 2.4G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power - combined TX power + antenna gain' },
+  { key: 'eirp_5GHz', label: 'EIRP 5G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power - combined TX power + antenna gain' },
+  { key: 'eirp_6GHz', label: 'EIRP 6G', sortable: true, className: 'w-24', title: 'Effective Isotropic Radiated Power - combined TX power + antenna gain' },
   { key: 'gain_5GHz', label: 'Gain 5G', sortable: true, className: 'w-20' },
   { key: 'txPower_5GHz', label: 'TX 5G', sortable: true, className: 'w-20' },
   { key: 'maxSpeed_5GHz', label: 'Speed 5G', sortable: true, className: 'w-24' },
@@ -177,7 +177,7 @@ export function APTable({ devices, selectedSlugs, onToggle, onDetail, sort, sort
                       {data ? (
                         <span className="text-unifi-text">{data.eirpDbm} <span className="text-unifi-text-secondary">dBm</span></span>
                       ) : (
-                        <span className="text-unifi-text-secondary/30">—</span>
+                        <span className="text-unifi-text-secondary/30">-</span>
                       )}
                     </td>
                   );
@@ -187,26 +187,26 @@ export function APTable({ devices, selectedSlugs, onToggle, onDetail, sort, sort
                 <td className="px-3 py-2 font-mono">
                   {ap.bands['5GHz'] ? (
                     <span>{ap.bands['5GHz'].gain} <span className="text-unifi-text-secondary">dBi</span></span>
-                  ) : <span className="text-unifi-text-secondary/30">—</span>}
+                  ) : <span className="text-unifi-text-secondary/30">-</span>}
                 </td>
 
                 {/* TX Power 5G */}
                 <td className="px-3 py-2 font-mono">
                   {ap.bands['5GHz'] ? (
                     <span>{ap.bands['5GHz'].maxPower} <span className="text-unifi-text-secondary">dBm</span></span>
-                  ) : <span className="text-unifi-text-secondary/30">—</span>}
+                  ) : <span className="text-unifi-text-secondary/30">-</span>}
                 </td>
 
                 {/* Speed 5G */}
                 <td className="px-3 py-2 font-mono">
                   {ap.bands['5GHz'] ? (
                     <span>{formatSpeed(ap.bands['5GHz'].maxSpeed)}</span>
-                  ) : <span className="text-unifi-text-secondary/30">—</span>}
+                  ) : <span className="text-unifi-text-secondary/30">-</span>}
                 </td>
 
                 {/* Ethernet */}
                 <td className="px-3 py-2 font-mono">
-                  {ap.ethernetMaxSpeed ? formatSpeed(ap.ethernetMaxSpeed) : <span className="text-unifi-text-secondary/30">—</span>}
+                  {ap.ethernetMaxSpeed ? formatSpeed(ap.ethernetMaxSpeed) : <span className="text-unifi-text-secondary/30">-</span>}
                 </td>
               </tr>
             );

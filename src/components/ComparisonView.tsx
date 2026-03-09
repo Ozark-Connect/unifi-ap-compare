@@ -92,7 +92,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
 
       eirpRows.push({
         label: 'EIRP',
-        tooltip: 'Effective Isotropic Radiated Power — combined TX power + antenna gain',
+        tooltip: 'Effective Isotropic Radiated Power - combined TX power + antenna gain',
         bandLabel: band,
         values: activeConfigs.map(c => {
           const data = c.bands[band];
@@ -178,7 +178,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
           label: 'Ports',
           values: devices.map(d => {
             if (d.numberOfPorts <= 0) return null;
-            if (d.portConfig) return `${d.numberOfPorts} — ${d.portConfig}`;
+            if (d.portConfig) return `${d.numberOfPorts} - ${d.portConfig}`;
             return String(d.numberOfPorts);
           }),
         },
@@ -384,7 +384,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                                   isBest={isBest}
                                 />
                               ) : (
-                                <span className="text-unifi-text-secondary/30 text-xs">—</span>
+                                <span className="text-unifi-text-secondary/30 text-xs">-</span>
                               )}
                               {showDeltas && di > 0 && data && activeConfigs[0].bands[row.bandKey] && (
                                 <Delta current={data.eirpDbm} baseline={activeConfigs[0].bands[row.bandKey]!.eirpDbm} unit="dBm" />
@@ -398,7 +398,7 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
                             <span className={`text-xs font-mono ${
                               isBest ? 'text-unifi-green font-semibold' : value !== null ? 'text-unifi-text' : 'text-unifi-text-secondary/30'
                             }`}>
-                              {value ?? '—'}
+                              {value ?? '-'}
                             </span>
                             {showDeltas && di > 0 && row.rawValues && row.rawValues[di] !== null && row.rawValues[0] !== null && (
                               <Delta current={row.rawValues[di]!} baseline={row.rawValues[0]!} unit="" />
