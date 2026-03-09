@@ -57,7 +57,7 @@ npm run fetch-data
 
 ### Direct link with pre-selected comparison
 ```
-https://ozark-connect.github.io/unifi-ap-compare/?compare=access-point-u7-pro,access-point-u6-long-range
+https://ozark-connect.github.io/unifi-ap-compare/?compare=u7-pro,u6-long-range
 ```
 
 ## License
