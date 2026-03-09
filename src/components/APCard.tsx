@@ -204,7 +204,7 @@ export function APCard({ ap, selected, onToggle, onDetail, maxEirpMw, sort }: AP
             {ap.numberOfPorts > 1 && (
               <div className="flex items-center justify-between">
                 <span className="text-[10px] text-unifi-text-secondary">Ports</span>
-                <span className="font-mono text-xs text-unifi-text">{ap.numberOfPorts}</span>
+                <span className="font-mono text-xs text-unifi-text">{ap.portConfig || ap.numberOfPorts}</span>
               </div>
             )}
           </>

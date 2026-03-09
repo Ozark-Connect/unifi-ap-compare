@@ -28,6 +28,7 @@ export interface DeviceOverride {
   configs: ConfigOverride[];
   wifiGeneration?: 'Wi-Fi 4' | 'Wi-Fi 5' | 'Wi-Fi 6' | 'Wi-Fi 6E' | 'Wi-Fi 7';
   numberOfPorts?: number;
+  portConfig?: string;
 }
 
 type OverrideMap = Record<string, Partial<Record<'us' | 'eu', DeviceOverride>>>;
@@ -154,6 +155,7 @@ export const OVERRIDES: OverrideMap = {
   'E7': {
     us: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Default',
@@ -172,6 +174,7 @@ export const OVERRIDES: OverrideMap = {
   'E7 Audience': {
     us: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Narrow (50°)',
@@ -191,6 +194,7 @@ export const OVERRIDES: OverrideMap = {
     },
     eu: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Narrow (50°)',
@@ -215,6 +219,7 @@ export const OVERRIDES: OverrideMap = {
   'E7 Audience Indoor': {
     us: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Narrow (50°)',
@@ -239,6 +244,7 @@ export const OVERRIDES: OverrideMap = {
   'E7 Campus': {
     us: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Default',
@@ -252,6 +258,7 @@ export const OVERRIDES: OverrideMap = {
     },
     eu: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Default',
@@ -271,6 +278,7 @@ export const OVERRIDES: OverrideMap = {
   'E7 Campus Indoor': {
     us: {
       numberOfPorts: 2,
+      portConfig: '1x 10GbE + 1x GbE, PoE++',
       configs: [
         {
           label: 'Default',
@@ -286,33 +294,68 @@ export const OVERRIDES: OverrideMap = {
 
   // XG: 1x 10GbE + 1x GbE (PoE++ on both) — catalog says 1
   'XG': {
-    us: { configs: [], numberOfPorts: 2 },
+    us: { configs: [], numberOfPorts: 2, portConfig: '1x 10GbE + 1x GbE, PoE++' },
   },
 
   // === Wi-Fi 5 APs with dual GbE (catalog says 1) ===
 
   // AC Pro: 2x GbE — catalog says 1
   'AC Pro': {
-    us: { configs: [], numberOfPorts: 2 },
+    us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
   // AC HD: 2x GbE — catalog says 1
   'AC HD': {
-    us: { configs: [], numberOfPorts: 2 },
+    us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
   // AC SHD: 2x GbE — catalog says 1
   'AC SHD': {
-    us: { configs: [], numberOfPorts: 2 },
+    us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
   },
   // AC Mesh Pro: 2x GbE — catalog says 1
   'AC Mesh Pro': {
-    us: { configs: [], numberOfPorts: 2 },
+    us: { configs: [], numberOfPorts: 2, portConfig: '2x GbE' },
+  },
+  // AC: 2x GbE — catalog correct
+  'AC': {
+    us: { configs: [], portConfig: '2x GbE' },
+  },
+  // AC Outdoor: 2x GbE — catalog correct
+  'AC Outdoor': {
+    us: { configs: [], portConfig: '2x GbE' },
+  },
+  // U6 Mesh Pro: 2x GbE — catalog correct
+  'U6 Mesh Pro': {
+    us: { configs: [], portConfig: '2x GbE' },
+  },
+
+  // === In-Wall APs — port descriptions (catalog port counts correct) ===
+
+  // U6 In-Wall: 5 ports — catalog correct
+  'U6 In-Wall': {
+    us: { configs: [], portConfig: '1x GbE uplink, 4x GbE switch (1 PoE out)' },
+  },
+  // U6 Enterprise In-Wall: 5 ports — catalog correct
+  'U6 Enterprise In-Wall': {
+    us: { configs: [], portConfig: '1x 2.5GbE uplink, 4x GbE switch (1 PoE out)' },
+  },
+  // AC In-Wall: 3 ports — catalog correct
+  'AC In-Wall': {
+    us: { configs: [], portConfig: '1x GbE uplink, 2x GbE switch' },
+  },
+  // AC In-Wall Pro: 3 ports — catalog correct
+  'AC In-Wall Pro': {
+    us: { configs: [], portConfig: '1x GbE uplink, 2x GbE switch' },
+  },
+  // In-Wall HD: 5 ports — catalog correct
+  'In-Wall HD': {
+    us: { configs: [], portConfig: '1x GbE uplink, 4x GbE switch (1 PoE out)' },
   },
 
   // === Wi-Fi 7 APs missing 'be' feature flag in catalog ===
 
-  // U7 In Wall: catalog has ax but not be
+  // U7 In Wall: catalog has ax but not be; 3 ports
   'U7 In Wall': {
-    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7', portConfig: '1x 2.5GbE uplink, 2x 2.5GbE switch (1 PoE out)' },
   },
   // U7 Long-Range: catalog has ax but not be
   'U7 Long-Range': {

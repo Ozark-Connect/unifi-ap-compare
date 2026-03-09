@@ -48,6 +48,7 @@ export interface AccessPoint {
   outdoor: boolean;
   ethernetMaxSpeed: number;
   numberOfPorts: number;
+  portConfig?: string;
   networkType: string;
   rawDeviceType: string;
   market: 'us' | 'eu' | 'both';

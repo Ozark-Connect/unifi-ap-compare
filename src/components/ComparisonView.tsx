@@ -176,7 +176,11 @@ export function ComparisonView({ devices, onRemove, onBack }: ComparisonViewProp
         },
         {
           label: 'Ports',
-          values: devices.map(d => d.numberOfPorts > 0 ? String(d.numberOfPorts) : null),
+          values: devices.map(d => {
+            if (d.numberOfPorts <= 0) return null;
+            if (d.portConfig) return `${d.numberOfPorts} — ${d.portConfig}`;
+            return String(d.numberOfPorts);
+          }),
         },
       ],
     });

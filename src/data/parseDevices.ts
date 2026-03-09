@@ -375,6 +375,9 @@ export function parseDevices(rawJson: any): AccessPoint[] {
     if (override.numberOfPorts !== undefined) {
       ap.numberOfPorts = override.numberOfPorts;
     }
+    if (override.portConfig) {
+      ap.portConfig = override.portConfig;
+    }
 
     if (override.configs.length === 0) continue;
 
