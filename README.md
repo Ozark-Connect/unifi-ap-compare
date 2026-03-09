@@ -2,7 +2,7 @@
 
 Side-by-side RF comparison for every UniFi access point - EIRP, antenna gain, TX power, speeds, and port configs.
 
-**[Live Demo](https://ozark-connect.github.io/unifi-ap-compare/)**
+**[Open the app](https://ozark-connect.github.io/unifi-ap-compare/)**
 
 ## Why This Exists
 
