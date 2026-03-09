@@ -338,9 +338,10 @@ export const OVERRIDES: OverrideMap = {
   // === Gateways with Wi-Fi ===
 
   // https://techspecs.ui.com/unifi/cloud-gateways/ucg-industrial
-  // public.json: gain AND maxPower missing entirely
+  // public.json: gain AND maxPower missing entirely; no ax/be feature flags
   'Cloud Gateway Industrial': {
     us: {
+      wifiGeneration: 'Wi-Fi 7',
       configs: [
         {
           label: 'Stub',
@@ -388,6 +389,10 @@ export const OVERRIDES: OverrideMap = {
         },
       ],
     },
+  },
+  // Dream Wall: catalog missing ax feature flag
+  'Dream Wall': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 6' },
   },
   // Dream Router 7: catalog missing ax/be feature flags entirely
   'Dream Router 7': {
