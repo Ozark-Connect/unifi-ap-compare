@@ -85,7 +85,7 @@ export interface FilterState {
 export const DEFAULT_FILTERS: FilterState = {
   deviceType: ['ap', 'gateway'],
   bands: [],
-  wifiGeneration: [],
+  wifiGeneration: ['Wi-Fi 6', 'Wi-Fi 6E', 'Wi-Fi 7'],
   formFactor: [],
   environment: [],
   status: [],

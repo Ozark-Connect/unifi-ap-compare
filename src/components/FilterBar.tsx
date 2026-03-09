@@ -124,8 +124,10 @@ export function FilterBar({
 
   const formFactors = [...new Set(allDevices.map(d => d.formFactor))].sort();
 
+  const wifiDefault = DEFAULT_FILTERS.wifiGeneration;
+  const wifiChanged = filters.wifiGeneration.length !== wifiDefault.length || filters.wifiGeneration.some(v => !wifiDefault.includes(v));
   const hasActiveFilters = filters.bands.length > 0 ||
-    filters.wifiGeneration.length > 0 ||
+    wifiChanged ||
     filters.formFactor.length > 0 ||
     filters.environment.length > 0 ||
     filters.search !== '' ||
@@ -259,7 +261,7 @@ export function FilterBar({
               <button onClick={() => onFiltersChange({ ...filters, bands: filters.bands.filter(v => v !== b) })} className="hover:text-white">×</button>
             </span>
           ))}
-          {filters.wifiGeneration.map(g => (
+          {wifiChanged && filters.wifiGeneration.map(g => (
             <span key={g} className="inline-flex items-center gap-1 text-[10px] bg-unifi-blue/15 text-unifi-blue-bright px-2 py-1 rounded-full">
               {g}
               <button onClick={() => onFiltersChange({ ...filters, wifiGeneration: filters.wifiGeneration.filter(v => v !== g) })} className="hover:text-white">×</button>

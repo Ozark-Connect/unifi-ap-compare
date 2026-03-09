@@ -35,7 +35,7 @@ function parseURL(): URLState {
           filters.bands = values.map(v => v.replace('ghz', 'GHz').replace('2.4', '2.4').replace('5', '5').replace('6', '6')) as BandKey[];
           break;
         case 'wifi':
-          filters.wifiGeneration = values.map(v => `Wi-Fi ${v}`);
+          filters.wifiGeneration = values[0] === 'all' ? [] : values.map(v => `Wi-Fi ${v}`);
           break;
         case 'form':
           filters.formFactor = values;
@@ -73,7 +73,9 @@ function serializeURL(state: URLState) {
     filterParts.push(`type:${f.deviceType.join(',')}`);
   }
   if (f.bands.length > 0) filterParts.push(`band:${f.bands.map(b => b.toLowerCase().replace('ghz', 'ghz')).join(',')}`);
-  if (f.wifiGeneration.length > 0) filterParts.push(`wifi:${f.wifiGeneration.map(v => v.replace('Wi-Fi ', '')).join(',')}`);
+  const defaultWifi = DEFAULT_FILTERS.wifiGeneration;
+  const wifiChanged = f.wifiGeneration.length !== defaultWifi.length || f.wifiGeneration.some(v => !defaultWifi.includes(v));
+  if (wifiChanged) filterParts.push(`wifi:${f.wifiGeneration.length === 0 ? 'all' : f.wifiGeneration.map(v => v.replace('Wi-Fi ', '')).join(',')}`);
   if (f.formFactor.length > 0) filterParts.push(`form:${f.formFactor.join(',')}`);
   if (f.environment.length > 0) filterParts.push(`env:${f.environment.join(',')}`);
 
