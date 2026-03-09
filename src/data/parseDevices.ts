@@ -366,6 +366,14 @@ export function parseDevices(rawJson: any): AccessPoint[] {
     const override = OVERRIDES[ap.name]?.[marketKey];
     if (!override) continue;
 
+    if (override.wifiGeneration) {
+      ap.wifiGeneration = override.wifiGeneration;
+      ap.features.ofdma = override.wifiGeneration === 'Wi-Fi 6' || override.wifiGeneration === 'Wi-Fi 6E' || override.wifiGeneration === 'Wi-Fi 7';
+      ap.features.muMimo = override.wifiGeneration !== 'Wi-Fi 4';
+    }
+
+    if (override.configs.length === 0) continue;
+
     const newConfigs: AntennaConfig[] = override.configs.map(oc => {
       const bands: Partial<Record<BandKey, BandData>> = {};
       const bandList: BandKey[] = [];

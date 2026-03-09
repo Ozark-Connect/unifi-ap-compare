@@ -26,6 +26,7 @@ interface ConfigOverride {
 
 export interface DeviceOverride {
   configs: ConfigOverride[];
+  wifiGeneration?: 'Wi-Fi 4' | 'Wi-Fi 5' | 'Wi-Fi 6' | 'Wi-Fi 6E' | 'Wi-Fi 7';
 }
 
 type OverrideMap = Record<string, Partial<Record<'us' | 'eu', DeviceOverride>>>;
@@ -270,6 +271,25 @@ export const OVERRIDES: OverrideMap = {
     },
   },
 
+  // === Wi-Fi 7 APs missing 'be' feature flag in catalog ===
+
+  // U7 In Wall: catalog has ax but not be
+  'U7 In Wall': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+  },
+  // U7 Long-Range: catalog has ax but not be
+  'U7 Long-Range': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+  },
+  // U7 Mesh: catalog has ax but not be
+  'U7 Mesh': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+  },
+  // U7 Pro XG Wall: catalog has ax but not be
+  'U7 Pro XG Wall': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+  },
+
   // === Specialty APs ===
 
   // https://techspecs.ui.com/unifi/wifi/uk-ultra
@@ -340,9 +360,10 @@ export const OVERRIDES: OverrideMap = {
     },
   },
   // https://techspecs.ui.com/unifi/cloud-gateways/udr-5g-max
-  // public.json: gain AND maxPower missing entirely
+  // public.json: gain AND maxPower missing entirely; no ax/be feature flags
   'Dream Router 5G Max': {
     us: {
+      wifiGeneration: 'Wi-Fi 7',
       configs: [
         {
           label: 'Default',
@@ -355,6 +376,7 @@ export const OVERRIDES: OverrideMap = {
       ],
     },
     eu: {
+      wifiGeneration: 'Wi-Fi 7',
       configs: [
         {
           label: 'Default',
@@ -366,5 +388,13 @@ export const OVERRIDES: OverrideMap = {
         },
       ],
     },
+  },
+  // Dream Router 7: catalog missing ax/be feature flags entirely
+  'Dream Router 7': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
+  },
+  // Express 7: catalog has ax but not be
+  'Express 7': {
+    us: { configs: [], wifiGeneration: 'Wi-Fi 7' },
   },
 };
